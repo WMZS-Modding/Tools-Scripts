@@ -65,7 +65,7 @@ DELETE FROM urls WHERE url LIKE '%$link%';
 VACUUM;
 "@
     & $sqlitePath $historyPath $deleteSQL
-    Write-Host "Removed $count items and collapsed History file."
+    Write-Host "Deleted $count items and collapsed History file."
 } else {
     Write-Host "Operation cancelled."
 }
