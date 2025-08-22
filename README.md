@@ -19,6 +19,7 @@ This script:
 - Windows 10 or later
 - [SQLite command-line tools](https://www.sqlite.org/download.html) (`sqlite3.exe`) must be installed. How to install: Download the ZIP package named **`sqlite-tools-win64-x64-<version>.zip`** (or 32-bit if required), extract it, and make sure `sqlite3.exe` is accessible (either add to PATH or specify full path in the script).
 - Google Chrome must be completely closed before running this script. You can use Task Manager to completely close
+- Turn off sync. If not, Chrome will be still showing history
 
 ## How to use
 1. Download or clone this repository (Use Green `Code` button)
