@@ -1,4 +1,4 @@
-# Delete-SiteHistory.ps1
+# Delete SiteHistory
 A PowerShell script that can help you delete a site's web history without manually deleting it using Chrome and without deleting the whole thing using CCleaner.
 
 This script:
@@ -44,6 +44,34 @@ Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
 - If Chrome is still open or closed without using Task Manager, the script will report an error saying it can't be executed
 - This script only works with Chrome. If you want to use it with Edge or any browser, you have to modify the declaration inside the script
 
+# ConversationsDecodeExtractor
+Python tool to decode and extract conversations from ChatGPT exported files. Supports 2 versions:
+- `ConversationsDecodeExtractor.py`: Combines all conversations into a single TXT file
+- `ConversationsDecodeExtractor2.py`: Splits conversations into separate TXT files
+## Requirements
+- Python: any version that supports it
+- JSON file from ChatGPT (`conversations.json` is the required file, included in the ZIP file, which was exported from the `Export Data` button)
+## Usage
+### ConversationsDecodeExtractor.py
+Run the script with the command:
+```bash
+python ConversationsDecodeExtractor.py "input_json.json" -o "output_txt.txt"
+```
+
+Result: a file `output_txt.txt` (or whatever name you give it) is exported containing the entire conversation
+
+### ConversationsDecodeExtractor2.py
+run the script with the command:
+```bash
+python ConversationsDecodeExtractor2.py "input_json.json" -o "output_folder"
+```
+
+Result: A bunch of TXT files containing conversations appear in the folder. The TXT files' names are in the form: `[number]_[name].txt`
+
+## Note
+- The script only extracts `content_type="text"`, i.e. messages and replies
+- Other content like `user_editable_context` will be ignored
+- If the conversation is too long, I recommend using `ConversationsDecodeExtractor2.py` so you can find it easier without having to open a huge file and experiencing lag
 ## Contribution
 If you want to improve this script:
 - Fork the repository and create a pull request
