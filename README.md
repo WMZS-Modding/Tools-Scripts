@@ -61,7 +61,7 @@ python ConversationsDecodeExtractor.py "input_json.json" -o "output_txt.txt"
 Result: a file `output_txt.txt` (or whatever name you give it) is exported containing the entire conversation
 
 ### ConversationsDecodeExtractor2.py
-run the script with the command:
+Run the script with the command:
 ```bash
 python ConversationsDecodeExtractor2.py "input_json.json" -o "output_folder"
 ```
