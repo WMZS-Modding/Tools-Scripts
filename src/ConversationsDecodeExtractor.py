@@ -1,54 +1,53 @@
 import json
-import os
 import argparse
+from pathlib import Path
 
 def main():
-    parser = argparse.ArgumentParser(
-        description="Decode ChatGPT Export JSON and extract conversations into a single TXT file"
-    )
-    parser.add_argument("input", help="JSON file path (eg: conversations.json)")
-    parser.add_argument("-o", "--output", default="conversations.txt", help="Name of output TXT")
+    parser = argparse.ArgumentParser(description="Decode and extract ChatGPT conversations to a single TXT file")
+    parser.add_argument("input_json", help="Input JSON exported from ChatGPT")
+    parser.add_argument("-o", "--output", help="Output TXT file", default="output.txt")
     args = parser.parse_args()
 
-    input_file = args.input
-    output_file = args.output
+    input_path = Path(args.input_json)
+    output_path = Path(args.output)
 
-    with open(input_file, "r", encoding="utf-8") as f:
+    with open(input_path, "r", encoding="utf-8") as f:
         data = json.load(f)
 
     all_texts = []
+    msg_counter = 0
 
-    for i, convo in enumerate(data, start=1):
-        title = convo.get("title", f"untitled_{i}")
-        items = convo.get("mapping", {})
+    for conv in data:
+        title = conv.get("title", "Untitled")
+        all_texts.append(f"===== {title} =====\n")
 
-        contents = []
-        for msg in items.values():
-            msg_data = msg.get("message")
-            if msg_data:
-                content_list = msg_data.get("content", [])
-                if isinstance(content_list, list):
-                    for c in content_list:
-                        if c.get("content_type") == "text":
-                            parts = c.get("parts", [])
-                            if parts:
-                                contents.append("\n".join(parts))
-                else:
-                    if msg_data.get("content", {}).get("content_type") == "text":
-                        parts = msg_data["content"].get("parts", [])
-                        if parts:
-                            contents.append("\n".join(parts))
+        for item in conv.get("mapping", {}).values():
+            message = item.get("message")
+            if not message:
+                continue
 
-        if not contents:
-            continue
+            content = message.get("content")
+            if not content:
+                continue
 
-        text_output = f"\n\n=== {i:03d}. {title} ===\n\n" + "\n\n".join(contents)
-        all_texts.append(text_output)
+            if content.get("content_type") == "text":
+                parts = content.get("parts", [])
+                if not parts:
+                    continue
+                role = message.get("author", {}).get("role", "")
+                role_label = "USER" if role == "user" else "ASSISTANT" if role == "assistant" else role.upper()
 
-    with open(output_file, "w", encoding="utf-8") as out:
-        out.write("\n\n".join(all_texts))
+                for part in parts:
+                    msg_counter += 1
+                    all_texts.append(f"[{msg_counter}] {role_label}: {part}\n")
 
-    print(f"✅ Exported {len(data)} conversations to a file: {output_file}")
+        all_texts.append("\n")
+
+    output_text = "\n".join(all_texts)
+    with open(output_path, "w", encoding="utf-8") as out:
+        out.write(output_text)
+
+    print(f"Done! Exported {msg_counter} messages to {output_path}")
 
 if __name__ == "__main__":
     main()
