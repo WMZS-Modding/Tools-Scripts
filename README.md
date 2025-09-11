@@ -45,12 +45,14 @@ Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
 - This script only works with Chrome. If you want to use it with Edge or any browser, you have to modify the declaration inside the script
 
 # ConversationsDecodeExtractor
-Python tool to decode and extract conversations from ChatGPT exported files. Supports 2 versions:
-- `ConversationsDecodeExtractor.py`: Combines all conversations into a single TXT file
-- `ConversationsDecodeExtractor2.py`: Splits conversations into separate TXT files
+Python tool to decode and extract conversations from ChatGPT and DeepSeek exported files. Supports 4 versions:
+- `ConversationsDecodeExtractor.py`: Combines all ChatGPT's conversations into a single TXT file
+- `ConversationsDecodeExtractor2.py`: Splits ChatGPT's onversations into separate TXT files
+- `ConversationsDecodeExtractor3.py`: Combines all DeepSeek's conversations into a single TXT file
+- `ConversationsDecodeExtractor4.py`: Splits DeepSeek's conversations into separate TXT files
 ## Requirements
 - Python: any version that supports it
-- JSON file from ChatGPT (`conversations.json` is the required file, included in the ZIP file, which was exported from the `Export Data` button)
+- JSON files from ChatGPT and DeepSeek (`conversations.json` is the required file, included in the ZIP file, which was exported from the `Export Data` button)
 ## Usage
 ### ConversationsDecodeExtractor.py
 Run the script with the command:
@@ -58,7 +60,7 @@ Run the script with the command:
 python ConversationsDecodeExtractor.py "input_json.json" -o "output_txt.txt"
 ```
 
-Result: a file `output_txt.txt` (or whatever name you give it) is exported containing the entire conversation
+Result: a file `output_txt.txt` (or whatever name you give it) is exported containing the entire ChatGPT's conversation
 
 ### ConversationsDecodeExtractor2.py
 Run the script with the command:
@@ -66,12 +68,36 @@ Run the script with the command:
 python ConversationsDecodeExtractor2.py "input_json.json" -o "output_folder"
 ```
 
-Result: A bunch of TXT files containing conversations appear in the folder. The TXT files' names are in the form: `[number]_[name].txt`
+Result: A bunch of TXT files containing ChatGPT's conversations appear in the folder.
+
+The TXT files' names are in the form: `[number]_[name].txt`
+
+### ConversationsDecodeExtractor3.py
+Run the script with the command:
+```bash
+python ConversationsDecodeExtractor3.py "input_json.json" -o "output_txt.txt"
+```
+
+Result: a file `output_txt.txt` (or whatever name you give it) is exported containing the entire DeepSeek's conversation
+
+### ConversationsDecodeExtractor4.py
+Run the script with the command:
+```bash
+python ConversationsDecodeExtractor4.py "input_json.json" -o "output_folder"
+```
+
+Result: A bunch of TXT files containing DeepSeek's conversations appear in the folder.
+
+The TXT files' names are in the form: `[number]_[name].txt`
 
 ## Note
-- The script only extracts `content_type="text"`, i.e. messages and replies
+### ChatGPT
+- The scripts only extracts `content_type="text"` and `"role"`, i.e. messages, roles and replies
 - Other content like `user_editable_context` will be ignored
 - If the conversation is too long, I recommend using `ConversationsDecodeExtractor2.py` so you can find it easier without having to open a huge file and experiencing lag
+### DeepSeek
+- The scripts only extract user's and assistant's replies + role
+- If the conversation is too long, I recommend using `ConversationsDecodeExtractor4.py` so you can find it easier without having to open a huge file and experiencing lag
 ## Contribution
 If you want to improve this script:
 - Fork the repository and create a pull request
