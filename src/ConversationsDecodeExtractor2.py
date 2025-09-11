@@ -1,60 +1,52 @@
 import json
-import os
 import argparse
+from pathlib import Path
 
 def main():
-    parser = argparse.ArgumentParser(
-        description="Extract ChatGPT conversations JSON into multiple TXT files"
-    )
-    parser.add_argument("input", help="JSON file path (eg: conversations.json)")
-    parser.add_argument("-o", "--output", default="conversations_txt", help="Folder to save the TXT files")
+    parser = argparse.ArgumentParser(description="Decode and extract ChatGPT conversations to multiple TXT files")
+    parser.add_argument("input_json", help="Input JSON exported from ChatGPT")
+    parser.add_argument("-o", "--output", help="Output folder", default="output_folder")
     args = parser.parse_args()
 
-    input_file = args.input
-    output_dir = args.output
+    input_path = Path(args.input_json)
+    output_folder = Path(args.output)
+    output_folder.mkdir(parents=True, exist_ok=True)
 
-    os.makedirs(output_dir, exist_ok=True)
-
-    with open(input_file, "r", encoding="utf-8") as f:
+    with open(input_path, "r", encoding="utf-8") as f:
         data = json.load(f)
 
-    count = 0
+    for conv_index, conv in enumerate(data, start=1):
+        title = conv.get("title", f"Conversation_{conv_index}")
+        safe_title = "".join(c for c in title if c.isalnum() or c in (" ", "_", "-")).rstrip()
+        file_path = output_folder / f"{conv_index:03d}_{safe_title}.txt"
 
-    for i, convo in enumerate(data, start=1):
-        title = convo.get("title", f"untitled_{i}")
-        items = convo.get("mapping", {})
+        lines = [f"===== {title} =====\n"]
+        msg_counter = 0
 
-        contents = []
-        for msg in items.values():
-            msg_data = msg.get("message")
-            if msg_data:
-                content_list = msg_data.get("content", [])
-                if isinstance(content_list, list):
-                    for c in content_list:
-                        if c.get("content_type") == "text":
-                            parts = c.get("parts", [])
-                            if parts:
-                                contents.append("\n".join(parts))
-                else:
-                    if msg_data.get("content", {}).get("content_type") == "text":
-                        parts = msg_data["content"].get("parts", [])
-                        if parts:
-                            contents.append("\n".join(parts))
+        for item in conv.get("mapping", {}).values():
+            message = item.get("message")
+            if not message:
+                continue
 
-        if not contents:
-            continue
+            content = message.get("content")
+            if not content:
+                continue
 
-        text_output = f"=== {title} ===\n\n" + "\n\n".join(contents)
+            if content.get("content_type") == "text":
+                parts = content.get("parts", [])
+                if not parts:
+                    continue
+                role = message.get("author", {}).get("role", "")
+                role_label = "USER" if role == "user" else "ASSISTANT" if role == "assistant" else role.upper()
 
-        safe_title = "".join(c if c.isalnum() or c in " _-" else "_" for c in title)[:100]
-        filename = os.path.join(output_dir, f"{i:03d}_{safe_title}.txt")
+                for part in parts:
+                    msg_counter += 1
+                    lines.append(f"[{msg_counter}] {role_label}: {part}\n")
 
-        with open(filename, "w", encoding="utf-8") as out:
-            out.write(text_output)
+        with open(file_path, "w", encoding="utf-8") as out:
+            out.write("\n".join(lines))
 
-        count += 1
-
-    print(f"✅ Exported {count} conversations to folder: {output_dir}")
+        print(f"Exported {msg_counter} messages to {file_path}")
 
 if __name__ == "__main__":
     main()
