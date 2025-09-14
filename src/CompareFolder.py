@@ -21,11 +21,20 @@ def compare_files(original_file, modified_file):
     if os.path.exists(original_file):
         with open(original_file, 'r', errors='ignore') as f:
             orig_lines = f.readlines()
-        diff = difflib.unified_diff(orig_lines, mod_lines,
-                                    fromfile=original_file,
-                                    tofile=modified_file,
-                                    lineterm='')
-        return '\n'.join(diff)
+        diff_lines = difflib.unified_diff(orig_lines, mod_lines,
+                                         fromfile=original_file,
+                                         tofile=modified_file,
+                                         lineterm='')
+
+        converted = []
+        for line in diff_lines:
+            if line.startswith('-') and not line.startswith('---'):
+                converted.append('−' + line[1:])
+            elif line.startswith('+') and not line.startswith('+++'):
+                converted.append('+' + line[1:])
+            else:
+                converted.append(line)
+        return '\n'.join(converted)
     else:
         return '\n'.join('+ ' + line.rstrip('\n') for line in mod_lines)
 
