@@ -98,6 +98,37 @@ The TXT files' names are in the form: `[number]_[name].txt`
 ### DeepSeek
 - The scripts only extract user's and assistant's replies + role
 - If the conversation is too long, I recommend using `ConversationsDecodeExtractor4.py` so you can find it easier without having to open a huge file and experiencing lag
+
+# CompareFolder
+A python tool can show changes with "−" and "+"
+
+## Features
+- Export results from Modified Folder with extension: `.cfc`
+- Add `−` and `+` to show changes
+
+## Requirements
+- 2 folders:
+  + Original folder
+  + Modified folder
+- Extension: [comparing-changes](https://marketplace.visualstudio.com/items?itemName=SuperHero2010.comparing-changes)
+
+## How to use
+1. Download [CompareFolder.py](https://github.com/WMZS-Modding/Tools-Scripts/blob/main/src/CompareFolder.py) and [comparing-changes](https://marketplace.visualstudio.com/items?itemName=SuperHero2010.comparing-changes) extension
+2. Run command on Command Prompt:
+```bash
+python CompareFolder.py "{input_folder}" -mo "{modified_folder}" -o "{output_folder_result}"
+```
+
+3. Go to `output_folder_result` and click any files with `.cfc` extension
+4. You can see `−` and `+` are coloring red and green
+
+## Note
+- Python will skip media files, unreadable files
+- If you run script and show `Python wasn't found`, you can run this command instead:
+```bash
+py CompareFolder.py "{input_folder}" -mo "{modified_folder}" -o "{output_folder_result}"
+```
+
 ## Contribution
 If you want to improve this script:
 - Fork the repository and create a pull request
