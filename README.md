@@ -39,20 +39,22 @@ Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
 6. Enter a URL or keyword (URL is recommended)
 7. Confirm deletion with **Y** to proceed or **N** to cancel
 
-##   Warnings
+## Warnings
 - Once the script has cleared a site's web history, it can't be undone. Make sure you really want to clear the web history before entering the command
 - If Chrome is still open or closed without using Task Manager, the script will report an error saying it can't be executed
 - This script only works with Chrome. If you want to use it with Edge or any browser, you have to modify the declaration inside the script
 
-# ConversationsDecodeExtractor
+# Conversations Decode Extractor (V1)
 Python tool to decode and extract conversations from ChatGPT and DeepSeek exported files. Supports 4 versions:
 - `ConversationsDecodeExtractor.py`: Combines all ChatGPT's conversations into a single TXT file
 - `ConversationsDecodeExtractor2.py`: Splits ChatGPT's onversations into separate TXT files
 - `ConversationsDecodeExtractor3.py`: Combines all DeepSeek's conversations into a single TXT file
 - `ConversationsDecodeExtractor4.py`: Splits DeepSeek's conversations into separate TXT files
+
 ## Requirements
 - Python: any version that supports it
 - JSON files from ChatGPT and DeepSeek (`conversations.json` is the required file, included in the ZIP file, which was exported from the `Export Data` button)
+
 ## Usage
 ### ConversationsDecodeExtractor.py
 Run the script with the command:
@@ -90,7 +92,7 @@ Result: A bunch of TXT files containing DeepSeek's conversations appear in the f
 
 The TXT files' names are in the form: `[number]_[name].txt`
 
-## Note
+## Notes
 ### ChatGPT
 - The scripts only extracts `content_type="text"` and `"role"`, i.e. messages, roles and replies
 - Other content like `user_editable_context` will be ignored
@@ -129,7 +131,40 @@ python CompareFolder.py "{input_folder}" -mo "{modified_folder}" -o "{output_fol
 py CompareFolder.py "{input_folder}" -mo "{modified_folder}" -o "{output_folder_result}"
 ```
 
-## Contribution
+# Conversations Extractor (V2)
+
+Second versions of the old scripts. They have similar functionality, but have been significantly improved. 2 versions are supported:
+- `ConversationsExtractor.py`: Exports DeepSeek's `conversations.json` to multiple TXT files
+- `ConversationsExtractor2.py`: Another variant, exports ChatGPT's `conversations.json` to multiple TXT files
+
+## Requirements
+- Python: any version that supports it
+- JSON files from ChatGPT and DeepSeek (`conversations.json` is the required file, included in the ZIP file, which was exported from the `Export Data` button)
+
+## Usage
+### ConversationsExtractor.py
+```bash
+python ConversationsExtractor.py "input_json.json" -o "output_folder_result"
+```
+
+Result: A bunch of TXT files containing DeepSeek's conversations appear in the folder. Same as V1 scripts, but it has many changes
+
+### ConversationsExtractor2.py
+```bash
+python ConversationsExtractor2.py "input_json.json" -o "output_folder_result"
+```
+
+Result: A bunch of TXT files containing ChatGPT's conversations appear in the folder. Same as V1 scripts, but it has many changes
+
+## Changes in V2
+- New message counter: Now you can know how many main messages and how many full messages in the conversation
+- Ignore system messages and empty messages
+- Context counter: This is the biggest update. Now you can know how many main contexts and how many full contexts
+
+## Notes
+These scripts are caculate characters of your chat histories. To know your real context counts, use this mathematical formulas: `Context ÷ 4`
+
+# Contribution
 If you want to improve this script:
 - Fork the repository and create a pull request
 - Open an issue for bug reports or feature requests
