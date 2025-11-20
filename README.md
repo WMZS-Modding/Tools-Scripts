@@ -164,6 +164,56 @@ Result: A bunch of TXT files containing ChatGPT's conversations appear in the fo
 ## Notes
 These scripts are calculate characters of your chat histories. To know your real context counts, use this mathematical formulas: `Context ÷ 4`
 
+# Glitch effect shader web generator
+This is a website that helps you apply Glitch shaders to your images.
+
+## Features
+- Glitch HTML: Main HTML web script to generate frame
+- `ClearBlackBackground.py`: It helps you clear the black background if you don't want
+- `AnimationFolder2GIF.py`: It helps you merge your animation folder to GIF image
+
+## Requirements
+You need install `Pillow`:
+
+```bash
+pip install pillow
+```
+
+or:
+
+```bash
+python -m pip install pillow
+```
+
+## Usage
+- First, go to `Glitch.html` by right clicking it and clicking `Open with/Google Chrome` or any browser
+- Then, choose your image. I recommend choosing PNG image. Change amount of Glitch Speed and Glitch Amount as you want
+- Next, click `Export ZIP (60 Frames)`. Extract ZIP to a folder
+- Finally, use these Python scripts:
+
+```bash
+python ClearBlackBackground.py "input_folder" -o "output_folder" -t threshold
+```
+
+```bash
+python AnimationFolder2GIF.py "input_folder_result" -o "Glitch.gif"
+```
+
+## Note
+- Web will generate all frames that were colored background with black
+- `ClearBlackBackground.py` might remove too much/little. Adjust `threshold` (0-255, default: 30)
+- If you don't want the 10s and 30 FPS limits, you can change this:
+
+```javascript
+const totalFrames = 60;
+const fps = 30;
+```
+
+If you don't know how to set duration of the frames, use this formula: `Frames = Duration × FPS`
+- `Frames`: `totalFrames`
+- `Duration`: How many seconds you want for your animation
+- `FPS`: `fps`
+
 # Contribution
 If you want to improve this script:
 - Fork the repository and create a pull request
