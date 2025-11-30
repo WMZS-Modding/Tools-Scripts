@@ -214,6 +214,30 @@ If you don't know how to set duration of the frames, use this formula: `Frames =
 - `Duration`: How many seconds you want for your animation
 - `FPS`: `fps`
 
+# Gradient Color Generator
+A simple script that generates many color codes from color input to color output
+
+## Usage
+1. Run this script:
+
+```bash
+python Gradient.py
+```
+
+2. Answer these question:
+- Color input (hex format)
+- Color output (hex format)
+- "How many color codes do you want to your gradient color?" (Maximum: 32)
+
+## Note
+If you dislike `32` limit, change this code:
+
+```python
+if 2 <= num_colors <= 32:
+```
+
+But please keep `2` value, the script will be error if you change this value
+
 # Contribution
 If you want to improve this script:
 - Fork the repository and create a pull request
