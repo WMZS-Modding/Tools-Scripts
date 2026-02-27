@@ -238,6 +238,27 @@ if 2 <= num_colors <= 32:
 
 But please keep `2` value, the script will be error if you change this value
 
+# Glow Gradient Frame Generator for custom FNF note skins
+2 simple python scripts can help you create frames of your note skins
+
+## Usage
+1. First, you must have 4 note frames (not glow, not gray)
+2. Run script:
+
+```bash
+python GlowGradientFrame.py -i "input_frame.png" -o "output_folder" -f "frame_number" --size "frame_size" --max-radius "radius_number"
+```
+
+3. Go to the output folder and run script:
+
+```bash
+python replace_black_edges.py "input_folder"
+```
+
+4. Do the same to other note frames
+5. Put them to a separate folder
+6. Go to [FNF-Spritesheet-XML-generator-web](https://uncertainprod.github.io/FNF-Spritesheet-XML-generator-Web/), select all your frames on that folder and export
+
 # Contribution
 If you want to improve this script:
 - Fork the repository and create a pull request
