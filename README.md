@@ -246,7 +246,7 @@ But please keep `2` value, the script will be error if you change this value
 2. Run script:
 
 ```bash
-python GlowGradientFrame.py -i "input_frame.png" -o "output_folder" -f "frame_number" --size "frame_size" --max-radius "radius_number"
+python GlowGradientFrame.py -i "input_frame.png" -o "output_folder" -f frame_number --size frame_size --max-radius radius_number
 ```
 
 3. Go to the output folder and run script:
@@ -258,6 +258,15 @@ python replace_black_edges.py "input_folder"
 4. Do the same to other note frames
 5. Put them to a separate folder
 6. Go to [FNF-Spritesheet-XML-generator-web](https://uncertainprod.github.io/FNF-Spritesheet-XML-generator-Web/), select all your frames on that folder and export
+
+# JSON Indent
+A simple script that indent all your JSON files on your folder
+
+## Usage
+
+```bash
+python JSONIndent.py -i "input_folder" -o "output_folder" --indent indent_number
+```
 
 # Contribution
 If you want to improve this script:
