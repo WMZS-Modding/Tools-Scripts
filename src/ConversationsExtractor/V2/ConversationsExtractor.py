@@ -2,7 +2,25 @@ import json
 import os
 import argparse
 import re
-from collections import deque
+import sys
+
+def set_recursion_limit():
+    """Set recursion limit based on command line argument if provided"""
+    if '--limit' in sys.argv:
+        limit_index = sys.argv.index('--limit')
+        if limit_index + 1 < len(sys.argv):
+            try:
+                new_limit = int(sys.argv[limit_index + 1])
+                original_limit = sys.getrecursionlimit()
+                sys.setrecursionlimit(new_limit)
+                print(f"Recursion limit changed from {original_limit} to {new_limit}")
+            except ValueError:
+                print(f"Warning: Invalid recursion limit value, using default")
+    else:
+        sys.setrecursionlimit(10000)
+        print(f"Recursion limit set to: {sys.getrecursionlimit()}")
+
+set_recursion_limit()
 
 def extract_latest_conversation_text(mapping):
     """Extract conversation text taking only latest edits/regenerations"""
@@ -107,8 +125,9 @@ def main():
         description="Extract DeepSeek conversations to TXT files with main and full context counts"
     )
     parser.add_argument("input", help="JSON file path (e.g., conversations.json)")
-    parser.add_argument("-o", "--output", default="deepseek_conversations", 
-                       help="Output directory")
+    parser.add_argument("-o", "--output", default="deepseek_conversations", help="Output directory")
+    parser.add_argument("--limit", type=int, help="Set recursion limit for deep conversations")
+
     args = parser.parse_args()
 
     os.makedirs(args.output, exist_ok=True)
