@@ -144,14 +144,14 @@ Second versions of the old scripts. They have similar functionality, but have be
 ## Usage
 ### ConversationsExtractor.py
 ```bash
-python ConversationsExtractor.py "input_json.json" -o "output_folder_result"
+python ConversationsExtractor.py "input_json.json" -o "output_folder_result" --limit 10000
 ```
 
 Result: A bunch of TXT files containing DeepSeek's conversations appear in the folder. Same as V1 scripts, but it has many changes
 
 ### ConversationsExtractor2.py
 ```bash
-python ConversationsExtractor2.py "input_json.json" -o "output_folder_result"
+python ConversationsExtractor2.py "input_json.json" -o "output_folder_result" --limit 10000
 ```
 
 Result: A bunch of TXT files containing ChatGPT's conversations appear in the folder. Same as V1 scripts, but it has many changes
