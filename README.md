@@ -238,10 +238,11 @@ if 2 <= num_colors <= 32:
 
 But please keep `2` value, the script will be error if you change this value
 
-# Glow Gradient Frame Generator for custom FNF note skins
-2 simple python scripts can help you create frames of your note skins
+# Glow Gradient Frame Generator and Note Splash Generator for custom FNF note skins
+3 simple python scripts can help you create frames of your note skins
 
 ## Usage
+### Glow Gradient
 1. First, you must have 4 note frames (not glow, not gray)
 2. Run script:
 
@@ -258,6 +259,18 @@ python replace_black_edges.py "input_folder"
 4. Do the same to other note frames
 5. Put them to a separate folder
 6. Go to [FNF-Spritesheet-XML-generator-web](https://uncertainprod.github.io/FNF-Spritesheet-XML-generator-Web/), select all your frames on that folder and export
+
+### Note Splash
+1. First, you must have 4 icons (not glow, not gray)
+2. Run script:
+
+```bash
+python NoteSplashGenerator.py -i "input_frame.png" -o "output_folder" -f frame_number --speed float --count int --size frame_size
+```
+
+3. Do the same for other icons
+4. Put them to a separate folder
+5. Go to [FNF-Spritesheet-XML-generator-web](https://uncertainprod.github.io/FNF-Spritesheet-XML-generator-Web/), select all your frames on that folder and export
 
 # JSON Indent
 A simple script that indent all your JSON files on your folder
