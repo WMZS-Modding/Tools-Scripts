@@ -281,7 +281,16 @@ A simple script that indent all your JSON files on your folder
 python JSONIndent.py -i "input_folder" -o "output_folder" --indent indent_number
 ```
 
+# Remove Fake Empty Lines
+A simple script that removes fake empty lines (the line with `\s` or `\t`)
+
+## Usage
+
+```bash
+python RemoveFakeEmptyLines.py -i "input_folder" -o "output_folder"
+```
+
 # Contribution
-If you want to improve this script:
+If you want to improve those scripts:
 - Fork the repository and create a pull request
 - Open an issue for bug reports or feature requests
