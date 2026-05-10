@@ -132,7 +132,7 @@ def main():
     success, errors, total = process_folder(args.input, args.output, args.recursive, args.advanced, args.preserve)
 
     print("=" * 60)
-    print(f"📊 Summary:")
+    print(f"Summary:")
     print(f"   Total files:  {total}")
     print(f"   Successful: {success}")
     print(f"   Errors:     {errors}")
