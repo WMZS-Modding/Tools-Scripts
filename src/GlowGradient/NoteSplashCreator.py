@@ -3,7 +3,45 @@ import math
 import argparse
 from PIL import Image
 
-def create_splash_frame(base_image, frame_idx, total_frames, speed=1.0, burst_count=8, frame_size=200):
+def load_images(input_path, burst_count=8):
+    import random
+
+    images = []
+
+    if os.path.isdir(input_path):
+        png_files = [f for f in os.listdir(input_path) if f.lower().endswith('.png')]
+        png_files.sort()
+
+        print(f"Found {len(png_files)} images in folder: {png_files}")
+
+        for filename in png_files:
+            img_path = os.path.join(input_path, filename)
+            img = Image.open(img_path).convert("RGBA")
+            images.append(img)
+
+        if len(images) < burst_count:
+            print(f"Warning: Only {len(images)} images found, need {burst_count}")
+            print(f"Randomly selecting from available images to fill {burst_count} directions")
+
+            original_images = images.copy()
+            images = []
+
+            for i in range(burst_count):
+                random_img = random.choice(original_images).copy()
+                images.append(random_img)
+
+        images = images[:burst_count]
+    else:
+        base_image = Image.open(input_path).convert("RGBA")
+        images = [base_image.copy() for _ in range(burst_count)]
+
+    for i in range(len(images)):
+        if images[i] is None:
+            images[i] = Image.new("RGBA", (100, 100), (0, 0, 0, 0))
+
+    return images
+
+def create_splash_frame(images, frame_idx, total_frames, speed=1.0, burst_count=8, frame_size=200):
     progress = frame_idx / (total_frames - 1) if total_frames > 1 else 0
 
     progress = 1.0 - math.pow(1.0 - progress, 1.5)
@@ -14,19 +52,24 @@ def create_splash_frame(base_image, frame_idx, total_frames, speed=1.0, burst_co
     canvas = Image.new("RGBA", (frame_size, frame_size), (0, 0, 0, 0))
     center_x, center_y = frame_size // 2, frame_size // 2
 
-    img_width, img_height = base_image.size
+    for i in range(min(burst_count, len(images))):
+        base_image = images[i]
 
-    is_horizontal = img_width > img_height
-    is_vertical = img_height > img_width
+        if base_image is None or base_image.getbbox() is None:
+            continue
 
-    for i in range(burst_count):
-        target_angle = (i / burst_count) * math.pi * 2
+        img_width, img_height = base_image.size
+
+        is_horizontal = img_width > img_height
+        is_vertical = img_height > img_width
+
+        angle = (i / burst_count) * math.pi * 2
 
         max_distance = frame_size * 0.6
         distance = max_distance * progress
 
-        x = center_x + math.cos(target_angle) * distance
-        y = center_y + math.sin(target_angle) * distance
+        x = center_x + math.cos(angle) * distance
+        y = center_y + math.sin(angle) * distance
 
         if progress < 0.7:
             scale = 0.2 + (progress / 0.7) * 0.8
@@ -42,23 +85,16 @@ def create_splash_frame(base_image, frame_idx, total_frames, speed=1.0, burst_co
         if new_size > 1:
             rotated = base_image.copy()
 
-            if is_vertical:
-                target_deg = math.degrees(target_angle)
+            target_deg = math.degrees(angle)
 
+            if is_horizontal:
+                rotation_needed = target_deg
+            elif is_vertical:
                 rotation_needed = target_deg + 90
-
-                rotated = rotated.rotate(-rotation_needed, expand=True, center=(rotated.width//2, rotated.height//2), resample=Image.Resampling.BICUBIC)
-            elif is_horizontal:
-                target_deg = math.degrees(target_angle)
-
-                rotation_needed = target_deg
-
-                rotated = rotated.rotate(-rotation_needed, expand=True, center=(rotated.width//2, rotated.height//2), resample=Image.Resampling.BICUBIC)
             else:
-                target_deg = math.degrees(target_angle)
                 rotation_needed = target_deg
 
-                rotated = rotated.rotate(-rotation_needed, expand=True, center=(rotated.width//2, rotated.height//2), resample=Image.Resampling.BICUBIC)
+            rotated = rotated.rotate(-rotation_needed, expand=True, center=(rotated.width//2, rotated.height//2), resample=Image.Resampling.BICUBIC)
 
             rotated.thumbnail((new_size, new_size), Image.Resampling.LANCZOS)
 
@@ -92,7 +128,8 @@ def create_splash_frame(base_image, frame_idx, total_frames, speed=1.0, burst_co
     return canvas
 
 def generate_splash_frames(input_path, output_folder, frame_count=6, speed=1.0, burst_count=8, frame_size=200):
-    base_image = Image.open(input_path).convert("RGBA")
+    images = load_images(input_path, burst_count)
+    print(f"Loaded {len(images)} images for {burst_count} burst directions")
 
     os.makedirs(output_folder, exist_ok=True)
 
@@ -100,7 +137,7 @@ def generate_splash_frames(input_path, output_folder, frame_count=6, speed=1.0, 
     for frame_idx in range(frame_count):
         print(f"Generating frame {frame_idx + 1}/{frame_count}...")
 
-        frame = create_splash_frame(base_image, frame_idx, frame_count, speed=speed, burst_count=burst_count, frame_size=frame_size)
+        frame = create_splash_frame(images, frame_idx, frame_count, speed=speed, burst_count=burst_count, frame_size=frame_size)
 
         frame_path = os.path.join(output_folder, f"splash_{frame_idx:02d}.png")
         frame.save(frame_path)
@@ -144,12 +181,13 @@ def generate_splash_xml(output_folder, frame_count, frame_size):
 
 def main():
     parser = argparse.ArgumentParser(description="Create FNF note splash animations")
-    parser.add_argument("-i", "--input", required=True, help="Input image path")
+    parser.add_argument("-i", "--input", required=True, help="Input image path OR folder with multiple PNG images")
     parser.add_argument("-o", "--output", required=True, help="Output folder")
     parser.add_argument("-f", "--frames", type=int, default=6, help="Number of frames (default: 6)")
     parser.add_argument("--speed", type=float, default=1.0, help="Animation speed multiplier (default: 1.0)")
     parser.add_argument("--count", type=int, default=8, help="Number of burst directions (4,6,8, default: 8)")
     parser.add_argument("--size", type=int, default=200, help="Frame size in pixels (default: 200)")
+
     args = parser.parse_args()
 
     generate_splash_frames(args.input, args.output, args.frames, args.speed, args.count, args.size)
