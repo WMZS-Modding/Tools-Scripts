@@ -261,11 +261,24 @@ python replace_black_edges.py "input_folder"
 6. Go to [FNF-Spritesheet-XML-generator-web](https://uncertainprod.github.io/FNF-Spritesheet-XML-generator-Web/), select all your frames on that folder and export
 
 ### Note Splash
+#### NoteSplashGenerator.py
 1. First, you must have 4 icons (not glow, not gray)
 2. Run script:
 
 ```bash
 python NoteSplashGenerator.py -i "input_frame.png" -o "output_folder" -f frame_number --speed float --count int --size frame_size
+```
+
+3. Do the same for other icons
+4. Put them to a separate folder
+5. Go to [FNF-Spritesheet-XML-generator-web](https://uncertainprod.github.io/FNF-Spritesheet-XML-generator-Web/), select all your frames on that folder and export
+
+#### NoteSplashCreator.py
+1. First, you must have multiple images for 4 notes
+2. Run script:
+
+```bash
+python NoteSplashCreator.py -i "input_folder" -o "output_folder" -f frame_number --speed float --count int --size frame_size
 ```
 
 3. Do the same for other icons
