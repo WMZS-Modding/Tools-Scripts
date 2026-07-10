@@ -1,4 +1,4 @@
-# Delete SiteHistory
+# Delete Site History
 A PowerShell script that can help you delete a site's web history without manually deleting it using Chrome and without deleting the whole thing using CCleaner.
 
 This script:
@@ -162,7 +162,8 @@ Result: A bunch of TXT files containing ChatGPT's conversations appear in the fo
 - Context counter: This is the biggest update. Now you can know how many main contexts and how many full contexts
 
 ## Notes
-These scripts are calculate characters of your chat histories. To know your real context counts, use this mathematical formulas: `Context ÷ 4`
+These scripts are calculate characters of your chat histories. To know your real context counts, use this mathematical formula: `Characters ÷ 4`
+Also, those scripts are counting both USER and ASSISTANT messages as separate messages. To know the true messages, use this mathematical formula: `Counted_Message ÷ 2`
 
 # Glitch effect shader web generator
 This is a website that helps you apply Glitch shaders to your images.
