@@ -163,6 +163,7 @@ Result: A bunch of TXT files containing ChatGPT's conversations appear in the fo
 
 ## Notes
 These scripts are calculate characters of your chat histories. To know your real context counts, use this mathematical formula: `Characters ÷ 4`
+
 Also, those scripts are counting both USER and ASSISTANT messages as separate messages. To know the true messages, use this mathematical formula: `Counted_Message ÷ 2`
 
 # Glitch effect shader web generator
