@@ -21,10 +21,7 @@ def compare_files(original_file, modified_file):
     if os.path.exists(original_file):
         with open(original_file, 'r', errors='ignore') as f:
             orig_lines = f.readlines()
-        diff_lines = difflib.unified_diff(orig_lines, mod_lines,
-                                         fromfile=original_file,
-                                         tofile=modified_file,
-                                         lineterm='')
+        diff_lines = difflib.unified_diff(orig_lines, mod_lines, fromfile=original_file, tofile=modified_file, lineterm='')
 
         converted = []
         for line in diff_lines:

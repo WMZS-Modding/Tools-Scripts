@@ -27,57 +27,100 @@ def extract_chatgpt_conversations(mapping):
     full_messages = []
 
     role_counts = {}
-    
+
     def follow_latest_path(node_id):
-        """Follow the latest path for main conversation"""
+        """Follow the path that continues the conversation"""
         node = mapping.get(node_id)
         if not node:
             return
-        
+
         message = node.get("message")
         if message and should_include_message(message):
             author_role = message.get("author", {}).get("role", "")
             content_parts = get_meaningful_content(message)
-            
+
             if content_parts:
                 role_label = "USER" if author_role == "user" else "ASSISTANT"
                 for part in content_parts:
                     main_messages.append(f"{role_label}: {part}")
 
         children = node.get("children", [])
-        if children:
+        if not children:
+            return
+
+        best_child = None
+        best_depth = -1
+
+        for child_id in children:
+            depth = count_descendants(mapping, child_id)
+            if depth > best_depth:
+                best_depth = depth
+                best_child = child_id
+
+        if best_child:
+            follow_latest_path(best_child)
+        else:
             follow_latest_path(children[-1])
-    
-    def extract_all_messages(node_id, depth=0):
-        """Extract all messages including branches for full conversation"""
+
+    def count_descendants(mapping, node_id):
+        """Count how many descendants a node has"""
         node = mapping.get(node_id)
         if not node:
-            return
-        
-        message = node.get("message")
-        if message and should_include_message(message):
-            author_role = message.get("author", {}).get("role", "")
-            content_parts = get_meaningful_content(message)
-            
-            if content_parts:
-                if depth not in role_counts:
-                    role_counts[depth] = {"USER": 0, "ASSISTANT": 0}
-
-                role_label_base = "USER" if author_role == "user" else "ASSISTANT"
-                role_counts[depth][role_label_base] += 1
-                count = role_counts[depth][role_label_base]
-
-                if count > 1:
-                    role_label = f"{role_label_base} {count}"
-                else:
-                    role_label = role_label_base
-                
-                for part in content_parts:
-                    full_messages.append(f"{role_label}: {part}")
+            return 0
 
         children = node.get("children", [])
+        if not children:
+            return 0
+
+        count = len(children)
         for child_id in children:
-            extract_all_messages(child_id, depth + 1)
+            count += count_descendants(mapping, child_id)
+
+        return count
+
+    def extract_all_messages(node_id, depth=0):
+        """Extract all messages including branches for full conversation"""
+        all_nodes = []
+
+        def collect_nodes(node_id, depth=0):
+            node = mapping.get(node_id)
+            if not node:
+                return
+
+            message = node.get("message")
+            if message:
+                timestamp = message.get("create_time")
+                author_role = message.get("author", {}).get("role", "")
+                content_parts = get_meaningful_content(message)
+
+                if author_role != "system" and content_parts:
+                    all_nodes.append((depth, timestamp, author_role, content_parts))
+
+            children = node.get("children", [])
+            for child_id in children:
+                collect_nodes(child_id, depth + 1)
+
+        collect_nodes(node_id, depth)
+
+        all_nodes.sort(key=lambda x: (x[0], x[1] if x[1] else 0))
+
+        role_counts = {}
+
+        for depth, timestamp, author_role, content_parts in all_nodes:
+            if depth not in role_counts:
+                role_counts[depth] = {"USER": 0, "ASSISTANT": 0}
+
+            role_base = "USER" if author_role == "user" else "ASSISTANT"
+            role_counts[depth][role_base] += 1
+            count = role_counts[depth][role_base]
+
+            if count > 1:
+                role_label = f"{role_base} {count}"
+            else:
+                role_label = role_base
+            
+            for part in content_parts:
+                full_messages.append(f"{role_label}: {part}")
     
     def should_include_message(message):
         """Check if message should be included in output"""
@@ -122,6 +165,7 @@ def main():
     parser = argparse.ArgumentParser(description="Extract ChatGPT conversations with context counting")
     parser.add_argument("input_json", help="Input JSON exported from ChatGPT")
     parser.add_argument("-o", "--output", help="Output folder", default="chatgpt_conversations")
+    parser.add_argument("--limit", type=int, help="Set recursion limit for deep conversations")
     args = parser.parse_args()
 
     input_path = Path(args.input_json)

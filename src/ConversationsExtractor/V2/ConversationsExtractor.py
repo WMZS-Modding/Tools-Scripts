@@ -23,15 +23,16 @@ def set_recursion_limit():
 set_recursion_limit()
 
 def extract_latest_conversation_text(mapping):
-    """Extract conversation text taking only latest edits/regenerations"""
+    """Extract conversation text taking only the path that continues the conversation"""
     all_messages = []
-    
-    def follow_latest_path(node_id):
-        """Follow the latest path through the conversation tree"""
-        node = mapping.get(node_id)
+
+    current_node_id = 'root'
+
+    while current_node_id:
+        node = mapping.get(current_node_id)
         if not node:
-            return
-        
+            break
+
         message_data = node.get("message")
         if message_data and "fragments" in message_data:
             for fragment in message_data["fragments"]:
@@ -43,35 +44,50 @@ def extract_latest_conversation_text(mapping):
                     all_messages.append(f"{role}: {content}")
 
         children = node.get("children", [])
-        if children:
-            latest_child = None
-            latest_time = None
-            
-            for child_id in children:
-                child_node = mapping.get(child_id)
-                if child_node and child_node.get("message"):
-                    child_time = child_node["message"].get("inserted_at")
-                    if child_time and (latest_time is None or child_time > latest_time):
-                        latest_child = child_id
-                        latest_time = child_time
+        if not children:
+            break
 
-            if latest_child:
-                follow_latest_path(latest_child)
-            elif children:
-                follow_latest_path(children[-1])
+        best_child = None
+        best_depth = -1
 
-    follow_latest_path('root')
+        for child_id in children:
+            depth = count_descendants(mapping, child_id)
+            if depth > best_depth:
+                best_depth = depth
+                best_child = child_id
+
+        if best_child:
+            current_node_id = best_child
+        else:
+            current_node_id = children[-1]
+
     return all_messages
+
+def count_descendants(mapping, node_id):
+    """Count how many descendants a node has"""
+    node = mapping.get(node_id)
+    if not node:
+        return 0
+
+    children = node.get("children", [])
+    if not children:
+        return 0
+
+    count = len(children)
+    for child_id in children:
+        count += count_descendants(mapping, child_id)
+
+    return count
 
 def extract_all_conversation_text(mapping):
     """Extract ALL conversation text including all edits/regenerations with numbering"""
     all_messages = []
     processed_nodes = set()
 
-    role_counts = {}
+    nodes_with_timestamps = []
     
-    def extract_all_nodes(node_id, depth=0):
-        """Extract content from all nodes (including all branches)"""
+    def collect_all_nodes(node_id, depth=0):
+        """Collect all nodes with their timestamps"""
         if node_id in processed_nodes:
             return
         processed_nodes.add(node_id)
@@ -79,13 +95,35 @@ def extract_all_conversation_text(mapping):
         node = mapping.get(node_id)
         if not node:
             return
-        
+
+        timestamp = None
+        message_data = node.get("message")
+        if message_data:
+            timestamp = message_data.get("inserted_at")
+
+        nodes_with_timestamps.append((node_id, depth, timestamp))
+
+        children = node.get("children", [])
+        for child_id in children:
+            collect_all_nodes(child_id, depth + 1)
+
+    collect_all_nodes('root')
+
+    nodes_with_timestamps.sort(key=lambda x: (x[1], x[2] if x[2] else ''))
+
+    role_counts = {}
+
+    for node_id, depth, timestamp in nodes_with_timestamps:
+        node = mapping.get(node_id)
+        if not node:
+            continue
+
         message_data = node.get("message")
         if message_data and "fragments" in message_data:
             for fragment in message_data["fragments"]:
                 msg_type = fragment.get("type", "")
                 content = fragment.get("content", "")
-                
+
                 if content.strip():
                     role = "USER" if msg_type == "REQUEST" else "ASSISTANT"
 
@@ -102,11 +140,6 @@ def extract_all_conversation_text(mapping):
                     
                     all_messages.append(f"{role_label}: {content}")
 
-        children = node.get("children", [])
-        for child_id in children:
-            extract_all_nodes(child_id, depth + 1)
-
-    extract_all_nodes('root')
     return all_messages
 
 def count_contexts(messages):
