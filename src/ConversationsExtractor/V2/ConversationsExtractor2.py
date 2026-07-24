@@ -74,9 +74,6 @@ def main():
 
     args = parser.parse_args()
 
-    sys.setrecursionlimit(args.limit)
-    print(f"Recursion limit set to: {args.limit}")
-
     input_path = Path(args.input_json)
     output_folder = Path(args.output)
     output_folder.mkdir(parents=True, exist_ok=True)
@@ -93,7 +90,8 @@ def main():
 
         main_messages = []
         full_messages = []
-        role_counts = {}
+
+        all_nodes = []
 
         def count_descendants(node_id):
             children = find_children(mapping, node_id)
@@ -142,7 +140,7 @@ def main():
             else:
                 follow_latest_path(children[-1])
 
-        def extract_all_messages(node_id, depth=0):
+        def collect_all_nodes(node_id, depth=0):
             node = mapping.get(node_id)
             if not node:
                 return
@@ -153,24 +151,14 @@ def main():
                 content_parts = get_meaningful_content(message)
 
                 if content_parts:
-                    if depth not in role_counts:
-                        role_counts[depth] = {"USER": 0, "ASSISTANT": 0}
-
-                    role_label_base = "USER" if author_role == "user" else "ASSISTANT"
-                    role_counts[depth][role_label_base] += 1
-                    count = role_counts[depth][role_label_base]
-
-                    if count > 1:
-                        role_label = f"{role_label_base} {count}"
-                    else:
-                        role_label = role_label_base
-
+                    timestamp = message.get("create_time", 0)
+                    role = "USER" if author_role == "user" else "ASSISTANT"
                     for part in content_parts:
-                        full_messages.append(f"{role_label}: {part}")
+                        all_nodes.append((timestamp, role, part))
 
             children = find_children(mapping, node_id)
             for child_id in children:
-                extract_all_messages(child_id, depth + 1)
+                collect_all_nodes(child_id, depth + 1)
 
         root_node = None
         for node_id, node in mapping.items():
@@ -185,7 +173,27 @@ def main():
         root_id = root_node.get("id")
 
         follow_latest_path(root_id)
-        extract_all_messages(root_id)
+
+        collect_all_nodes(root_id)
+
+        all_nodes.sort(key=lambda x: x[0] if x[0] else 0)
+
+        role_counters = {"USER": 0, "ASSISTANT": 0}
+        last_role = None
+
+        for timestamp, role, content in all_nodes:
+            role_counters[role] += 1
+            count = role_counters[role]
+
+            if count > 1 and last_role == role:
+                role_label = f"{role} {count}"
+            else:
+                role_label = role
+                if last_role != role:
+                    pass
+
+            full_messages.append(f"{role_label}: {content}")
+            last_role = role
 
         if not main_messages:
             print(f"Skipping conversation {conv_index}: No meaningful messages")
