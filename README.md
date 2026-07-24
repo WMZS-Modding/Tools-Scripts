@@ -136,6 +136,7 @@ py CompareFolder.py "{input_folder}" -mo "{modified_folder}" -o "{output_folder_
 Second versions of the old scripts. They have similar functionality, but have been significantly improved. 2 versions are supported:
 - `ConversationsExtractor.py`: Exports DeepSeek's `conversations.json` to multiple TXT files
 - `ConversationsExtractor2.py`: Another variant, exports ChatGPT's `conversations.json` to multiple TXT files
+- `ConversationsExtractor2-OldFormat.py`: Old format `children` version because new format is `parent`
 
 ## Requirements
 - Python: any version that supports it
@@ -149,9 +150,15 @@ python ConversationsExtractor.py "input_json.json" -o "output_folder_result" --l
 
 Result: A bunch of TXT files containing DeepSeek's conversations appear in the folder. Same as V1 scripts, but it has many changes
 
-### ConversationsExtractor2.py
+### ConversationsExtractor2.py & ConversationsExtractor2-OldFormat.py
+For new format:
 ```bash
 python ConversationsExtractor2.py "input_json.json" -o "output_folder_result" --limit 10000
+```
+
+For old format:
+```bash
+python ConversationsExtractor2-OldFormat.py "input_json.json" -o "output_folder_result" --limit 10000
 ```
 
 Result: A bunch of TXT files containing ChatGPT's conversations appear in the folder. Same as V1 scripts, but it has many changes
