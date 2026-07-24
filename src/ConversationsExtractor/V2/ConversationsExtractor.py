@@ -5,7 +5,6 @@ import re
 import sys
 
 def set_recursion_limit():
-    """Set recursion limit based on command line argument if provided"""
     if '--limit' in sys.argv:
         limit_index = sys.argv.index('--limit')
         if limit_index + 1 < len(sys.argv):
@@ -23,7 +22,6 @@ def set_recursion_limit():
 set_recursion_limit()
 
 def extract_latest_conversation_text(mapping):
-    """Extract conversation text taking only the path that continues the conversation"""
     all_messages = []
 
     current_node_id = 'root'
@@ -38,7 +36,7 @@ def extract_latest_conversation_text(mapping):
             for fragment in message_data["fragments"]:
                 msg_type = fragment.get("type", "")
                 content = fragment.get("content", "")
-                
+
                 if content.strip():
                     role = "USER" if msg_type == "REQUEST" else "ASSISTANT"
                     all_messages.append(f"{role}: {content}")
@@ -64,7 +62,6 @@ def extract_latest_conversation_text(mapping):
     return all_messages
 
 def count_descendants(mapping, node_id):
-    """Count how many descendants a node has"""
     node = mapping.get(node_id)
     if not node:
         return 0
@@ -80,18 +77,16 @@ def count_descendants(mapping, node_id):
     return count
 
 def extract_all_conversation_text(mapping):
-    """Extract ALL conversation text including all edits/regenerations with numbering"""
     all_messages = []
     processed_nodes = set()
 
     nodes_with_timestamps = []
-    
+
     def collect_all_nodes(node_id, depth=0):
-        """Collect all nodes with their timestamps"""
         if node_id in processed_nodes:
             return
         processed_nodes.add(node_id)
-        
+
         node = mapping.get(node_id)
         if not node:
             return
@@ -137,26 +132,23 @@ def extract_all_conversation_text(mapping):
                         role_label = f"{role} {count}"
                     else:
                         role_label = role
-                    
+
                     all_messages.append(f"{role_label}: {content}")
 
     return all_messages
 
 def count_contexts(messages):
-    """Count characters and convert to K contexts"""
     if not messages:
         return 0
-    
+
     text = "\n".join(messages)
     chars = len(text)
     contexts_k = chars // 1000
-    
+
     return contexts_k
 
 def main():
-    parser = argparse.ArgumentParser(
-        description="Extract DeepSeek conversations to TXT files with main and full context counts"
-    )
+    parser = argparse.ArgumentParser(description="Extract DeepSeek conversations to TXT files with main and full context counts")
     parser.add_argument("input", help="JSON file path (e.g., conversations.json)")
     parser.add_argument("-o", "--output", default="deepseek_conversations", help="Output directory")
     parser.add_argument("--limit", type=int, help="Set recursion limit for deep conversations")
@@ -176,7 +168,7 @@ def main():
 
         main_messages = extract_latest_conversation_text(mapping)
         full_messages = extract_all_conversation_text(mapping)
-        
+
         if not main_messages:
             continue
 
@@ -186,7 +178,7 @@ def main():
         safe_title = re.sub(r'[^\w\s-]', '', title)
         safe_title = re.sub(r'[-\s]+', '_', safe_title).strip('_')
         safe_title = safe_title[:50] or f"conversation_{i}"
-        
+
         filename = f"{i:03d}_{safe_title}.txt"
         filepath = os.path.join(args.output, filename)
 
