@@ -345,6 +345,9 @@ python AngryCounter.py -f "input_folder"
 ## If you want to convert your anger points to crushing force
 Since this is just metaphorical physics, I'll consider 1 point to be 1 kgf. For example, `500 points = 500 kg`.
 
+## If you want to know how much your energy is drained
+I treat `1 point = -0.0000001 energy`. For example, `500 points = -0.00005 energy`. Look like it's too little, but it's large enough to drain your energy. But my estimate is not 100% accurate. So, you can believe or not.
+
 ## Warning
 The script **isn't 100% accurate**. You can share your anger points; but don't use it to swear, arrogant, threaten and any negative behaviors.
 
