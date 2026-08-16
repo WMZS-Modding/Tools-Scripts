@@ -342,6 +342,9 @@ python AngryCounter.py -i "input_file.txt"
 python AngryCounter.py -f "input_folder"
 ```
 
+## If you want to convert your anger points to crushing force
+Since this is just metaphorical physics, I'll consider 1 point to be 1 kgf. For example, `500 points = 500 kg`.
+
 ## Warning
 The script **isn't 100% accurate**. You can share your anger points; but don't use it to swear, arrogant, threaten and any negative behaviors.
 
