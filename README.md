@@ -312,6 +312,39 @@ A simple script that removes fake empty lines (the line with `\s` or `\t`)
 python RemoveFakeEmptyLines.py -i "input_folder" -o "output_folder"
 ```
 
+# Angry Counter
+Simple script calcucates the anger points with character-based mode. You can know how much your anger points are.
+
+The scale of negative emojis (10 is max):
+- 🚫: 4
+- 💢: 5
+- ❌: 5
+- 😬: 6
+- 😠: 7
+- 😡: 8
+- 🤬: 9
+
+The scale of uppercase, lowercase and mixed:
+- Uppercase: 2.0
+- Lowercase: 0.5
+- Mixed: 1.0
+
+The arg `--emoji` is optional, default is False.
+
+## Usage
+### File mode
+```bash
+python AngryCounter.py -i "input_file.txt"
+```
+
+### Folder mode
+```bash
+python AngryCounter.py -f "input_folder"
+```
+
+## Warning
+The script **isn't 100% accurate**. You can share your anger points; but don't use it to swear, arrogant, threaten and any negative behaviors.
+
 # Contribution
 If you want to improve those scripts:
 - Fork the repository and create a pull request
