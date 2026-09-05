@@ -323,6 +323,8 @@ The scale of negative emojis (10 is max):
 - 😠: 7
 - 😡: 8
 - 🤬: 9
+- 😈: 9.5
+- 👿: 10
 
 The scale of uppercase, lowercase and mixed:
 - Uppercase: 2.0

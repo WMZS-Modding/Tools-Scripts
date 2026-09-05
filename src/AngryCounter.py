@@ -14,6 +14,8 @@ EMOJI_WEIGHTS = {
     '😠': 7,
     '😡': 8,
     '🤬': 9,
+    '😈': 9.5,
+    '👿': 10
 }
 
 SKIP_EXTENSIONS = {
@@ -122,7 +124,7 @@ def process_folder(folderpath: str, emoji_mode: bool = False, verbose: bool = Fa
                 total_emoji_points += result['emoji_points']
                 file_count += 1
                 if verbose:
-                    print(f"Processed: {filepath} → {result['total_points']} points (emoji: {result['emoji_points']})")
+                    print(f"Processed: {filepath} → {result['total_points']:.2f} points (emoji: {result['emoji_points']})")
 
     return {
         'total_points': total_points,
