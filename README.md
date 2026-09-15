@@ -326,6 +326,14 @@ The scale of negative emojis (10 is max):
 - 😈: 9.5
 - 👿: 10
 
+There are some exceptions that break 10 limit:
+- '🔥': 12
+- '⚡': 15
+- '💥': 20
+- '🌊': 30
+- '🌪': 40
+- '🌋': 50
+
 The scale of uppercase, lowercase and mixed:
 - Uppercase: 2.0
 - Lowercase: 0.5

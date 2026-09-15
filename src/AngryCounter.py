@@ -7,6 +7,7 @@ WEIGHT_MIXED_CASE = 1.0
 WEIGHT_UPPERCASE = 2.0
 
 EMOJI_WEIGHTS = {
+    # Normal scale (4-10)
     '🚫': 4,
     '💢': 5,
     '❌': 5,
@@ -15,7 +16,15 @@ EMOJI_WEIGHTS = {
     '😡': 8,
     '🤬': 9,
     '😈': 9.5,
-    '👿': 10
+    '👿': 10,
+
+    # Exception scale (breaking the 10 limit)
+    '🔥': 12,
+    '⚡': 15,
+    '💥': 20,
+    '🌊': 30,
+    '🌪': 40,
+    '🌋': 50
 }
 
 SKIP_EXTENSIONS = {
