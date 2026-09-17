@@ -327,19 +327,19 @@ The scale of negative emojis (10 is max):
 - 👿: 10
 
 There are some exceptions that break 10 limit:
-- '🔥': 12
-- '⚡': 15
-- '💥': 20
-- '🌊': 30
-- '🌪': 40
-- '🌋': 50
+- 🔥: 12
+- ⚡: 15
+- 💥: 20
+- 🌊: 30
+- 🌪: 40
+- 🌋: 50
 
 The scale of uppercase, lowercase and mixed:
 - Uppercase: 2.0
 - Lowercase: 0.5
 - Mixed: 1.0
 
-The arg `--emoji` is optional, default is False.
+The arg `--emoji` and `--no-abbreviation` are optional, default are False.
 
 ## Usage
 ### File mode
@@ -354,6 +354,14 @@ python AngryCounter.py -f "input_folder"
 
 ## If you want to convert your anger points to crushing force
 Since this is just metaphorical physics, I'll consider 1 point to be 1 kgf. For example, `500 points = 500 kg`.
+
+Weight of exception emojis:
+- 🔥: 3 kgf
+- ⚡: 5 kgf
+- 💥: 20 kgf
+- 🌊: 1000 tons
+- 🌪: 10 tons
+- 🌋: 2000 tons
 
 ## If you want to know how much your energy is drained
 I treat `1 point = -0.0000001 energy`. For example, `500 points = -0.00005 energy`. Look like it's too little, but it's large enough to drain your energy. But my estimate is not 100% accurate. So, you can believe or not.
