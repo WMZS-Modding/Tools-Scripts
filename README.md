@@ -369,6 +369,19 @@ I treat `1 point = -0.0000001 energy`. For example, `500 points = -0.00005 energ
 ## Warning
 The script **isn't 100% accurate**. You can share your anger points; but don't use it to swear, arrogant, threaten and any negative behaviors.
 
+# Merge Chart
+Simple script to merge charts, specially spamming charts (colossal charts).
+
+## Usage
+```bash
+python merge_charts.py -i "chart_1.json" "chart_2.json" ... -o "output_json.json" --indent --no-indent
+```
+- Replace `...` with your count of chart paths, split by space
+- Use one of 2 flags `--indent` or `--no-indent`, leave empty for automatical detection
+
+## Note
+It runs on Memory. The weaker computer will crash. I recommend merging them individually.
+
 # Contribution
 If you want to improve those scripts:
 - Fork the repository and create a pull request
